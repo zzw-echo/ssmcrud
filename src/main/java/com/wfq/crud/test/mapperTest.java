@@ -72,6 +72,7 @@ public class mapperTest {
         }
 
 
+
         //4、删除所有员工
 //        mapper.deleteByExample(null);
         
