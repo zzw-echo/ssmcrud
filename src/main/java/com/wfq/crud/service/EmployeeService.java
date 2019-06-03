@@ -13,6 +13,10 @@ public class EmployeeService {
     @Autowired
     EmployeeMapper employeeMapper;
 
+    /**
+     * 查询所有员工
+     * @return
+     */
     public List<Employee> getAll() {
         return employeeMapper.selectByExampleWithDept(null);
     }

@@ -6,10 +6,15 @@
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
+    
     <typeAliases>
         <package name="com.wfq.crud.bean"/>
     </typeAliases>
 
+    <!--    注册分页插件-->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor"/>
+    </plugins>
 
 
 </configuration>
