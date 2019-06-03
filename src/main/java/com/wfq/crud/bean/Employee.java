@@ -9,6 +9,10 @@ public class Employee {
 
     private String empEmail;
 
+    private Integer dId;
+
+    //查询员工的同时，查询部门信息
+    private Department department;
     public Employee() {
     }
 
@@ -19,12 +23,6 @@ public class Employee {
         this.empEmail = empEmail;
         this.dId = dId;
     }
-
-    private Integer dId;
-
-    //查询员工的同时，查询部门信息
-    private Department department;
-
     public Department getDepartment() {
         return department;
     }
