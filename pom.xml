@@ -21,6 +21,15 @@
 
   <dependencies>
 
+<!--    jrs303数据校验支持：tomcat7以上的服务器，
+        tomcat7以下的服务器：el表达式，不是最新的。额外给服务器的lib包中替换新的标准的el
+        -->
+    <dependency>
+      <groupId>org.hibernate.validator</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>6.0.16.Final</version>
+    </dependency>
+
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
