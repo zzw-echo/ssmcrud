@@ -478,6 +478,7 @@
                 $("#email_update_input").val(empData.empEmail);
                 $("#empUpdateModal input[name=empGender]").val([empData.empGender]);
                 $("#empUpdateModal select").val([empData.dId]);
+                $("#empUpdateModal select").val([empData.dId]);
             }
         });
     }
