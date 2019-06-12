@@ -10,12 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +26,14 @@ public class EmployeeController {
     EmployeeService employeeService;
 
 
+    @GetMapping("/emp/{id}")
+    @ResponseBody
+    public Msg getEmp(@PathVariable("id") Integer id){
+        Employee employee = employeeService.getEmp(id);
+        return Msg.success().add("emp",employee);
+    }
+
+
     /**
      * 检验用户名是否可用
      * @param empName
@@ -39,9 +43,9 @@ public class EmployeeController {
     @RequestMapping("/checkuser")
     public Msg checkuser(@RequestParam("empName") String empName){
         //先判断用户名是否是合法的表达式
-        String regx = "(^[a-zA-Z0-9_-]{6,16}$)|(^[\\u2E80-\\u9FFF]{2,5})";
+        String regx = "(^[a-zA-Z0-9_-]{4,16}$)|(^[\\u2E80-\\u9FFF]{2,5})";
         if (!empName.matches(regx)){
-            return Msg.fail().add("va_msg","用户名必须是6-16位英文数字或2-5位中文");
+            return Msg.fail().add("va_msg","用户名必须是4-16位英文数字或2-5位中文");
         }
 
         //数据库用户名重复校验
@@ -63,7 +67,7 @@ public class EmployeeController {
      */
     @PostMapping("/emp")
     @ResponseBody
-    public Msg saveEmp(@Valid Employee employee, BindingResult result){
+    public Msg saveEmp( Employee employee, BindingResult result){
         if (result.hasErrors()){
             Map<String,Object> map = new HashMap<>();
             //校验失败，应该返回失败，在模态框中显示校验失败的错误信息

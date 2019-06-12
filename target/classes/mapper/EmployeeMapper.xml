@@ -99,6 +99,9 @@
     <if test="orderByClause != null">
       order by ${orderByClause}
     </if>
+    <if test="orderByClause == null">
+        order by e.emp_id
+    </if>
   </select>
   <select id="selectByPrimaryKeyWithDept" resultMap="WithDeptResultMap">
     select
