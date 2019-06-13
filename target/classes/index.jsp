@@ -184,7 +184,7 @@
 
 <script type="text/javascript">
 
-    var totalRecord;
+    var totalRecord,currentPage;
     //1、页面加载完成以后，直接去发送一个ajax请求，要到分页数据
     $(function () {
         //第一次去首页
@@ -246,6 +246,7 @@
             result.extend.pageInfo.pages+"页，共"+
             result.extend.pageInfo.total+"条记录");
         totalRecord = result.extend.pageInfo.total;
+        currentPage = result.extend.pageInfo.pageNum;
     }
     
     //解析构建分页条信息，点击进行跳转下一页
@@ -270,8 +271,6 @@
             });
         }
 
-
-
         var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;"));
         var lastPageLi = $("<li></li>").append($("<a></a>").append("末页").attr("href","#"));
         if (result.extend.pageInfo.hasNextPage == false) {
@@ -285,8 +284,6 @@
                 to_page(result.extend.pageInfo.pages);
             });
         }
-
-
 
         //页码1，2，3，4
         ul.append(firstPageLi).append(prePageLi);
@@ -452,7 +449,8 @@
         });
     });
 
-    //1、我们是按钮创建之前就绑定了click，所以绑不上
+
+    //1）、我们是按钮创建之前就绑定了click，所以绑不上
     //1）、可以在创建按钮的时候绑定事件
     //2）、绑定点击.live()
     //jquery新版没有live，使用on方法进行替代
@@ -462,6 +460,8 @@
         getDepts("#empUpdateModal select");
         //2、查出员工信息，显示员工信息
         getEmp($(this).attr("edit_id"));
+        //3、把员工的id传递给模态框的更新按钮
+        $("#emp_update_btn").attr("edit_id",$(this).attr("edit_id"));
         $("#empUpdateModal").modal({
             backdrop:"static"
         });
@@ -472,7 +472,7 @@
             url:"${APP_PATH}/emp/"+id,
             type:"GET",
             success:function (result) {
-                console.log(result);
+                // console.log(result);
                 var empData = result.extend.emp;
                 $("#empName_update_static").text(empData.empName);
                 $("#email_update_input").val(empData.empEmail);
@@ -481,6 +481,33 @@
             }
         });
     }
+
+    //点击更新，更新员工信息
+    $("#emp_update_btn").click(function () {
+        //验证邮箱是否合法
+        //1、校验邮箱信息
+        var empEmail = $("#email_update_input").val();
+        var regEmail = /^([a-zA-Z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/
+        if (!regEmail.test(empEmail)) {
+            show_validate_msg("#email_update_input","error","邮箱格式错误");
+            return false;
+        }else{
+            show_validate_msg("#email_update_input","success","");
+        }
+
+        //2、发送ajax请求，保存更新员工信息
+        $.ajax({
+            url:"${APP_PATH}/emp/"+$(this).attr("edit_id"),
+            type:"PUT",
+            data:$("#empUpdateModal form").serialize(),
+            success:function (result) {
+                // alert(result.msg);
+                $("#empUpdateModal").modal("hide");
+                to_page(currentPage);
+            }
+        });
+
+    });
 
 
 </script>
