@@ -26,6 +26,28 @@ public class EmployeeController {
     EmployeeService employeeService;
 
 
+    /**
+     * 解决方案
+     * 要能支持直接发送PUT之类的请求，还要封装请求体中的数据
+     * 1、配置上HttpputFormContentFilter；
+     * 2、作用：将请求体中的数据解析包装成一个map。
+     * 3、request被重新包装，request.getParameter()被重写，就会从自己封装的map中取数据
+     * 员工更新方法
+     * @param employee
+     * @return
+     */
+    @PutMapping("/emp/{empId}")
+    @ResponseBody
+    public Msg saveEmp(Employee employee){
+        employeeService.updateEmp(employee);
+        return Msg.success();
+    }
+
+    /**
+     * 根据id查询员工
+     * @param id
+     * @return
+     */
     @GetMapping("/emp/{id}")
     @ResponseBody
     public Msg getEmp(@PathVariable("id") Integer id){
@@ -62,8 +84,6 @@ public class EmployeeController {
      * 员工保存
      * 1、支持jsr303校验
      * 2、导入Hibernate-Validator
-     *
-     *
      */
     @PostMapping("/emp")
     @ResponseBody
