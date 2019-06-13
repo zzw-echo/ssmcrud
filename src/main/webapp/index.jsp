@@ -145,8 +145,8 @@
     <%--        新加删除按钮--%>
     <div class="row">
         <div class="col-md-4 col-md-offset-8">
-            <button class="btn btn-primary" id="emp_add_modal_btn">新增</button>
-            <button class="btn btn-danger">删除</button>
+            <button class="btn btn-primary" id="emp_add_modal_btn">新增员工</button>
+            <button class="btn btn-danger" id="emp_delete_all_btn">批量删除</button>
         </div>
     </div>
     <%--        显示表格内容--%>
@@ -155,7 +155,10 @@
             <table class="table table-hover" id="emps_table">
                 <thead>
                     <tr>
-                        <th>#</th>
+                        <th>
+                            <input type="checkbox" id="check_all">
+                        </th>
+                        <th>工号</th>
                         <th>empName</th>
                         <th>gender</th>
                         <th>email</th>
@@ -193,7 +196,7 @@
 
     function to_page(pn) {
         $.ajax({
-            url:"${APP_PATH}/emps",
+            url:"${APP_PATH}/emps/",
             data:"pn="+pn,
             type:"GET",
             success:function (result) {
@@ -215,6 +218,7 @@
         var emps = result.extend.pageInfo.list;
         $.each(emps,function (index, item) {
             // alert(item.empName);
+            var checkBoxTd = $("<td></td>").append("<input type='checkbox' class='check_item'/>");
             var empIdTd = $("<td></td>").append(item.empId);
             var empNameTd = $("<td></td>").append(item.empName);
             var genderTd = $("<td></td>").append(item.empGender=="M"?"男":"女");
@@ -226,9 +230,13 @@
             editBtn.attr("edit_id",item.empId);
             var delBtn = $("<button></button>").addClass("btn btn-danger btn-sm delete_btn")
                 .append($("<span></span>").addClass("glyphicon glyphicon-trash")).append("删除");
+            //为删除按钮添加属性表示id
+            delBtn.attr("del_id",item.empId);
             var btnTd =$("<td></td>").append(editBtn).append(" ").append(delBtn);
             //append方法执行完成以后还是返回原来的元素，所以可以继续append
-            $("<tr></tr>").append(empIdTd)
+            $("<tr></tr>")
+                .append(checkBoxTd)
+                .append(empIdTd)
                 .append(empNameTd)
                 .append(genderTd)
                 .append(emailTd)
@@ -330,7 +338,7 @@
         //清空之前的下拉列表
         $(ele).empty();
         $.ajax({
-            url:"${APP_PATH}/depts",
+            url:"${APP_PATH}/depts/",
             type:"GET",
             success:function (result) {
                 // console.log(result);
@@ -389,7 +397,7 @@
        //发送ajax请求校验用户名是否可用
         var empName = this.value;
         $.ajax({
-            url:"${APP_PATH}/checkuser",
+            url:"${APP_PATH}/checkuser/",
             data:"empName="+empName,
             type:"POST",
             success:function(result) {
@@ -421,7 +429,7 @@
         }
         //2、发送ajax请求保存员工
         $.ajax({
-            url:"${APP_PATH}/emp",
+            url:"${APP_PATH}/emp/",
             type:"POST",
             data:$("#empAddModal form").serialize(),
             success:function (result) {
@@ -507,9 +515,69 @@
                 to_page(currentPage);
             }
         });
-
     });
 
+    //单个删除
+    $(document).on("click",".delete_btn",function () {
+       //1、弹出确认删除对话框
+        var empName = $(this).parents("tr").find("td:eq(2)").text();
+        var empId = $(this).attr("del_id");
+        if(confirm("确认删除【"+empName+"】吗？")){
+            //发送ajax请求删除
+            $.ajax({
+                url:"${APP_PATH}/emp/"+empId,
+                type:"DELETE",
+                success:function (result) {
+                    alert(result.msg);
+                    //回到本页
+                    to_page(currentPage);
+                }
+            });
+        }
+    });
+
+    //完成全选/全不选功能
+    $("#check_all").click(function () {
+        var is_All_Check = $(this).prop("checked");
+        $(".check_item").prop("checked",is_All_Check);
+    });
+
+    //check_item，复选框选择操作
+    $(document).on("click",".check_item",function () {
+        //判断当前选择中的元素是否选满
+        var flag = $(".check_item:checked").length == $(".check_item").length;
+        $("#check_all").prop("checked",flag);
+    })
+
+    //点击全部删除，就批量删除
+    $("#emp_delete_all_btn").click(function () {
+        var empNames = "";
+        var del_idstr = "";
+        $.each($(".check_item:checked"),function () {
+            //组装员工字符串
+            empNames += $(this).parents("tr").find("td:eq(2)").text()+",";
+            //组织员工id字符串
+            del_idstr += $(this).parents("tr").find("td:eq(1)").text()+"-";
+        });
+        //去除empnames多月的","
+        empNames = empNames.substring(0,empNames.length-1);
+        //去除员工删除id多余的-
+        del_idstr = del_idstr.substring(0,del_idstr.length-1);
+        if (confirm("确认删除【" + empNames + "】吗？")) {
+            //发送ajax请求
+            $.ajax({
+                url:"${APP_PATH}/emp/"+del_idstr,
+                type:"DELETE",
+                success:function (result) {
+                    alert(result.msg);
+                    //回到当前页面
+                    to_page(currentPage);
+                    $("#check_all").prop("checked",false);
+                }
+            })
+
+        }
+    });
 
 </script>
 
