@@ -501,7 +501,7 @@
             url:"${APP_PATH}/emp/"+$(this).attr("edit_id"),
             type:"PUT",
             data:$("#empUpdateModal form").serialize(),
-            success:function (result) {
+            success:function () {
                 // alert(result.msg);
                 $("#empUpdateModal").modal("hide");
                 to_page(currentPage);

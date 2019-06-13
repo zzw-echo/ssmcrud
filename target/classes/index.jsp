@@ -246,6 +246,7 @@
             result.extend.pageInfo.pages+"页，共"+
             result.extend.pageInfo.total+"条记录");
         totalRecord = result.extend.pageInfo.total;
+        //更新员工信息后，需返回显示当前页
         currentPage = result.extend.pageInfo.pageNum;
     }
     
