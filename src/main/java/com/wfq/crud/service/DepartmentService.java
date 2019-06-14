@@ -14,7 +14,6 @@ public class DepartmentService {
     private DepartmentMapper departmentMapper;
 
     public List<Department> getDepts() {
-
         List<Department> list = departmentMapper.selectByExample(null);
         return list;
     }
