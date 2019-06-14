@@ -95,7 +95,6 @@ public class EmployeeController {
         if (!empName.matches(regx)){
             return Msg.fail().add("va_msg","用户名必须是4-16位英文数字或2-5位中文");
         }
-
         //数据库用户名重复校验
         boolean b = employeeService.checkUser(empName);
         if (b){
